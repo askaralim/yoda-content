@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.taklip.yoda.content.dto.ContentDTO;
+import com.taklip.yoda.content.dto.ContentPageResponse;
 import com.taklip.yoda.content.model.Content;
 import com.taklip.yoda.content.vo.ContentSearchVO;
 
@@ -43,27 +44,27 @@ public interface ContentService extends IService<Content> {
     /**
      * Get contents by category
      */
-    Page<ContentDTO> getContentsByCategory(Long categoryId, Integer limit);
+    ContentPageResponse getContentsByCategory(Long categoryId, Integer limit);
 
     /**
      * Get featured contents
      */
-    Page<ContentDTO> getFeaturedContents(Integer offset, Integer limit);
+    ContentPageResponse getFeaturedContents(Integer offset, Integer limit);
 
     /**
      * Get no featured contents
      */
-    Page<ContentDTO> getNoFeaturedContents(Integer offset, Integer limit);
+    ContentPageResponse getNoFeaturedContents(Integer offset, Integer limit);
 
     /**
      * Get published contents
      */
-    Page<ContentDTO> getPublishedContents(Integer offset, Integer limit);
+    ContentPageResponse getPublishedContents(Integer offset, Integer limit);
 
     /**
      * Get contents by tags
      */
-    Page<ContentDTO> getContentsByTags(String tags, Integer limit);
+    ContentPageResponse getContentsByTags(String tags, Integer limit);
 
     /**
      * Increase hit counter
@@ -103,10 +104,10 @@ public interface ContentService extends IService<Content> {
     /**
      * Get content by page
      */
-    Page<ContentDTO> getContentByPage(Integer offset, Integer limit);
+    ContentPageResponse getContentByPage(Integer offset, Integer limit);
 
     /**
      * Get contents by user
      */
-    Page<ContentDTO> getContentsByUser(Long userId, Integer offset, Integer limit);
+    ContentPageResponse getContentsByUser(Long userId, Integer offset, Integer limit);
 }

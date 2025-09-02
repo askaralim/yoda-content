@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -24,10 +22,7 @@ public class JacksonConfig {
         // objectMapper.registerModule(new JavaTimeModule());
         // objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         // objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper
-                .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY)
-                .activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL)
+        return new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))

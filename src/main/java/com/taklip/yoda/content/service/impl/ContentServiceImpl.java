@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.taklip.yoda.content.convertor.ContentConvertor;
 import com.taklip.yoda.content.dto.ContentDTO;
+import com.taklip.yoda.content.dto.ContentPageResponse;
 import com.taklip.yoda.content.mapper.ContentMapper;
 import com.taklip.yoda.content.model.Content;
 import com.taklip.yoda.content.service.CacheLoggingService;
@@ -97,29 +98,29 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
 
     @Override
     @Cacheable(value = "content:by:category", key = "#categoryId + ':' + #limit")
-    public Page<ContentDTO> getContentsByCategory(Long categoryId, Integer limit) {
+    public ContentPageResponse getContentsByCategory(Long categoryId, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(0, limit),
                 new LambdaQueryWrapper<Content>().eq(Content::getCategoryId, categoryId));
         Page<ContentDTO> dtoPage = new Page<>(0, limit);
         dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         dtoPage.setTotal(contentPage.getTotal());
-        return dtoPage;
+        return ContentPageResponse.fromPage(dtoPage);
     }
 
     @Override
-    // @Cacheable(value = "content:featured", key = "#offset + ':' + #limit")
-    public Page<ContentDTO> getFeaturedContents(Integer offset, Integer limit) {
+    @Cacheable(value = "content:featured", key = "'offset:' + #offset + ':limit:' + #limit")
+    public ContentPageResponse getFeaturedContents(Integer offset, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(offset, limit),
                 new LambdaQueryWrapper<Content>().eq(Content::isFeatureData, true).orderByDesc(Content::getCreateTime));
         Page<ContentDTO> dtoPage = new Page<>(offset, limit);
         dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         dtoPage.setTotal(contentPage.getTotal());
-        return dtoPage;
+        return ContentPageResponse.fromPage(dtoPage);
     }
 
     @Override
-    @Cacheable(value = "content:no:featured", key = "#offset + ':' + #limit")
-    public Page<ContentDTO> getNoFeaturedContents(Integer offset, Integer limit) {
+    @Cacheable(value = "content:no:featured", key = "'offset:' + #offset + ':limit:' + #limit")
+    public ContentPageResponse getNoFeaturedContents(Integer offset, Integer limit) {
         IPage<Content> contentPage = null;
         try {
             contentPage = page(new Page<>(offset, limit),
@@ -132,29 +133,29 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
         Page<ContentDTO> dtoPage = new Page<>(offset, limit);
         dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         dtoPage.setTotal(contentPage.getTotal());
-        return dtoPage;
+        return ContentPageResponse.fromPage(dtoPage);
     }
 
     @Override
-    @Cacheable(value = "content:published", key = "#offset + ':' + #limit")
-    public Page<ContentDTO> getPublishedContents(Integer offset, Integer limit) {
+    @Cacheable(value = "content:published", key = "'offset:' + #offset + ':limit:' + #limit")
+    public ContentPageResponse getPublishedContents(Integer offset, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(offset, limit),
                 new LambdaQueryWrapper<Content>().eq(Content::isPublished, true));
         Page<ContentDTO> dtoPage = new Page<>(offset, limit);
         dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         dtoPage.setTotal(contentPage.getTotal());
-        return dtoPage;
+        return ContentPageResponse.fromPage(dtoPage);
     }
 
     @Override
-    @Cacheable(value = "content:by:tags", key = "#tags.hashCode() + ':' + #limit")
-    public Page<ContentDTO> getContentsByTags(String tags, Integer limit) {
+    @Cacheable(value = "content:by:tags", key = "'tags:' + #tags.hashCode() + ':limit:' + #limit")
+    public ContentPageResponse getContentsByTags(String tags, Integer limit) {
         // IPage<Content> contentPage = page(new Page<>(0, limit),
         // new LambdaQueryWrapper<Content>().like(Content::getTags, tags));
         // Page<ContentDTO> dtoPage = new Page<>(0, limit);
         // dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         // dtoPage.setTotal(contentPage.getTotal());
-        // return dtoPage;
+        // return ContentPageResponse.fromPage(dtoPage);
         return null;
     }
 
@@ -169,7 +170,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
     }
 
     @Override
-    @Cacheable(value = "content:by:id", key = "#id + ':hit-counter'")
+    @Cacheable(value = "content:by:id", key = "'id:' + #id + ':hit-counter'")
     public Integer getHitCounter(Long id) {
         Content content = this.getById(id);
         if (content == null) {
@@ -232,26 +233,26 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
     }
 
     @Override
-    public Page<ContentDTO> getContentByPage(Integer offset, Integer limit) {
+    public ContentPageResponse getContentByPage(Integer offset, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(offset, limit),
                 new LambdaQueryWrapper<Content>().orderByDesc(Content::getCreateTime));
 
         Page<ContentDTO> dtoPage = new Page<>(offset, limit);
         dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         dtoPage.setTotal(contentPage.getTotal());
-        return dtoPage;
+        return ContentPageResponse.fromPage(dtoPage);
     }
 
     @Override
     @Cacheable(value = "content:by:user", key = "#userId + ':' + #offset + ':' + #limit")
-    public Page<ContentDTO> getContentsByUser(Long userId, Integer offset, Integer limit) {
+    public ContentPageResponse getContentsByUser(Long userId, Integer offset, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(offset, limit),
                 new LambdaQueryWrapper<Content>().eq(Content::getCreateBy, userId).orderByDesc(Content::getCreateTime));
 
         Page<ContentDTO> dtoPage = new Page<>(offset, limit);
         dtoPage.setRecords(contentConvertor.toDTOList(contentPage.getRecords()));
         dtoPage.setTotal(contentPage.getTotal());
-        return dtoPage;
+        return ContentPageResponse.fromPage(dtoPage);
     }
 
     // Example: Manual cache operation with custom logic

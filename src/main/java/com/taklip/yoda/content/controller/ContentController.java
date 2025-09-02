@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.taklip.yoda.content.dto.ContentDTO;
+import com.taklip.yoda.content.dto.ContentPageResponse;
 import com.taklip.yoda.content.service.ContentService;
 import com.taklip.yoda.content.vo.ContentSearchVO;
 
@@ -62,10 +62,10 @@ public class ContentController {
 
     @GetMapping("/page")
     @Operation(summary = "Get content by page offset and limit", description = "Retrieve content by its page offset and limit")
-    public ResponseEntity<Page<ContentDTO>> getContentByPage(
+    public ResponseEntity<ContentPageResponse> getContentByPage(
             @Parameter(description = "Offset") @RequestParam(defaultValue = "0") Integer offset,
             @Parameter(description = "Limit") @RequestParam(defaultValue = "10") Integer limit) {
-        Page<ContentDTO> content = contentService.getContentByPage(offset, limit);
+        ContentPageResponse content = contentService.getContentByPage(offset, limit);
         return ResponseEntity.ok(content);
     }
 
@@ -86,31 +86,31 @@ public class ContentController {
 
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get contents by category", description = "Retrieve contents by category ID")
-    public ResponseEntity<Page<ContentDTO>> getContentsByCategory(
+    public ResponseEntity<ContentPageResponse> getContentsByCategory(
             @Parameter(description = "Category ID") @PathVariable Long categoryId,
             @Parameter(description = "Limit number of results") @RequestParam(defaultValue = "20") Integer limit) {
-        Page<ContentDTO> contents = contentService.getContentsByCategory(categoryId, limit);
+        ContentPageResponse contents = contentService.getContentsByCategory(categoryId, limit);
         return ResponseEntity.ok(contents);
     }
 
     @GetMapping("/user/{userId}")
     @Operation(summary = "Get contents by user", description = "Retrieve contents by user ID")
-    public ResponseEntity<Page<ContentDTO>> getContentsByUser(
+    public ResponseEntity<ContentPageResponse> getContentsByUser(
             @Parameter(description = "User ID") @PathVariable Long userId,
             @Parameter(description = "Offset") @RequestParam(defaultValue = "0") Integer offset,
             @Parameter(description = "Limit") @RequestParam(defaultValue = "10") Integer limit) {
-        Page<ContentDTO> contents = contentService.getContentsByUser(userId, offset, limit);
+        ContentPageResponse contents = contentService.getContentsByUser(userId, offset, limit);
         return ResponseEntity.ok(contents);
     }
 
     @GetMapping("/featured")
     @Operation(summary = "Get featured contents", description = "Retrieve featured contents")
-    public ResponseEntity<Page<ContentDTO>> getFeaturedContents(
+    public ResponseEntity<ContentPageResponse> getFeaturedContents(
             @Parameter(description = "Feature data") @RequestParam(defaultValue = "true") Boolean featureData,
             @Parameter(description = "Limit number of results") @RequestParam(defaultValue = "10") Integer limit,
             @Parameter(description = "Offset") @RequestParam(defaultValue = "0") Integer offset) {
         log.info("🔍 Getting {} contents for limit: {} and offset: {}", featureData ? "featured" : "no featured", limit, offset);
-        Page<ContentDTO> contents = null;
+        ContentPageResponse contents = null;
         if (featureData) {
             contents = contentService.getFeaturedContents(offset, limit);
         } else {
@@ -118,14 +118,13 @@ public class ContentController {
         }
 
         log.info("🔍 Got {} contents size: {}", featureData ? "featured" : "no featured", contents.getRecords().size());
-        log.info("Contents: {}", JSON.toJSONString(contents));
 
         return ResponseEntity.ok(contents);
     }
 
     @GetMapping("/published")
     @Operation(summary = "Get published contents", description = "Retrieve published contents")
-    public ResponseEntity<Page<ContentDTO>> getPublishedContents(
+    public ResponseEntity<ContentPageResponse> getPublishedContents(
             @Parameter(description = "Limit number of results") @RequestParam(defaultValue = "20") Integer limit,
             @Parameter(description = "Offset") @RequestParam(defaultValue = "0") Integer offset) {
         return ResponseEntity.ok(contentService.getPublishedContents(offset, limit));
@@ -133,10 +132,10 @@ public class ContentController {
 
     @GetMapping("/tags")
     @Operation(summary = "Get contents by tags", description = "Retrieve contents by tags")
-    public ResponseEntity<Page<ContentDTO>> getContentsByTags(
+    public ResponseEntity<ContentPageResponse> getContentsByTags(
             @Parameter(description = "Tags (comma-separated)") @RequestParam String tags,
             @Parameter(description = "Limit number of results") @RequestParam(defaultValue = "20") Integer limit) {
-        Page<ContentDTO> contents = contentService.getContentsByTags(tags, limit);
+        ContentPageResponse contents = contentService.getContentsByTags(tags, limit);
         return ResponseEntity.ok(contents);
     }
 
