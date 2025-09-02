@@ -1,0 +1,75 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/yoda?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&connectTimeout=60000&socketTimeout=60000
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
+      auto-commit: true
+      validation-timeout: 5000
+      leak-detection-threshold: 60000
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+# Actuator for health checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,caches
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    # Application logging
+    com.taklip.yoda.content: DEBUG
+    
+    # Cache logging - L1 (Caffeine)
+    com.github.benmanes.caffeine: DEBUG
+    com.github.benmanes.caffeine.cache: DEBUG
+    
+    # Cache logging - L2 (Redis)
+    org.springframework.data.redis: DEBUG
+    org.springframework.data.redis.cache: DEBUG
+    org.springframework.cache: DEBUG
+    org.springframework.cache.interceptor: DEBUG
+    
+    # Spring Cache abstraction
+    org.springframework.cache.CacheManager: DEBUG
+    org.springframework.cache.concurrent.ConcurrentMapCacheManager: DEBUG
+    org.springframework.data.redis.cache.RedisCacheManager: DEBUG
+    
+    # Cache statistics and metrics
+    org.springframework.boot.actuator.cache: DEBUG
+    
+    # Web and database logging
+    org.springframework.web: INFO
+    com.baomidou.mybatisplus: INFO
+    
+    # Root logging level
+    root: INFO

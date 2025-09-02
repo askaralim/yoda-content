@@ -1,0 +1,98 @@
+# Server Configuration
+server:
+  port: 8082
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: yoda-content
+  
+  profiles:
+    active: local
+  
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/yoda?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: myuser
+    password: secret
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+# MyBatis Plus Configuration
+mybatis-plus:
+  lazy-loading-enabled: true
+  configuration:
+    aggressive-lazy-loading: false
+    auto-mapping-behavior: partial
+    map-underscore-to-camel-case: true
+    local-cache-scope: statement
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+  executor-type: simple
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.taklip.yoda.content.model
+  type-aliases-super-type: com.taklip.yoda.content.model.BaseEntity
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,caches
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+# Logging Configuration for Cache Monitoring
+logging:
+  level:
+    # Web and database logging
+    org.springframework.web: INFO
+    com.baomidou.mybatisplus: INFO
+    
+    # Root logging level
+    root: INFO
+    
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  
+  # File logging configuration
+  file:
+    name: logs/yoda-content.log
+    max-size: 100MB
+    max-history: 30
+
+# OpenAPI Configuration - Using default paths
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taklip.yoda.content.mapper.ContentMapper">
+
+    <resultMap id="BaseResultMap" type="com.taklip.yoda.content.model.Content">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="feature_data" property="featureData" jdbcType="BOOLEAN"/>
+        <result column="published" property="published" jdbcType="BOOLEAN"/>
+        <result column="category_id" property="categoryId" jdbcType="BIGINT"/>
+        <result column="publish_date" property="publishDate" jdbcType="TIMESTAMP"/>
+        <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP"/>
+        <result column="hit_counter" property="hitCounter" jdbcType="INTEGER"/>
+        <result column="score" property="score" jdbcType="INTEGER"/>
+        <result column="site_id" property="siteId" jdbcType="INTEGER"/>
+        <result column="natural_key" property="naturalKey" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="short_description" property="shortDescription" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="LONGVARCHAR"/>
+        <result column="pageTitle" property="page_title" jdbcType="VARCHAR"/>
+        <result column="featured_image" property="featuredImage" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by" property="createBy" jdbcType="BIGINT"/>
+        <result column="update_by" property="updateBy" jdbcType="BIGINT"/>
+        <result column="deleted" property="deleted" jdbcType="BOOLEAN"/>
+        <!-- <result column="page_title" property="pageTitle" jdbcType="VARCHAR"/> -->
+        <!-- <result column="content_type" property="contentType" jdbcType="VARCHAR"/> -->
+        <!-- <result column="status" property="status" jdbcType="VARCHAR"/> -->
+        <!-- <result column="tags" property="tags" jdbcType="VARCHAR"/> -->
+        <!-- <result column="meta_keywords" property="metaKeywords" jdbcType="VARCHAR"/>
+        <result column="meta_description" property="metaDescription" jdbcType="VARCHAR"/>
+        <result column="canonical_url" property="canonicalUrl" jdbcType="VARCHAR"/>
+        <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+        <result column="allow_comments" property="allowComments" jdbcType="BOOLEAN"/>
+        <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="seo_title" property="seoTitle" jdbcType="VARCHAR"/>
+        <result column="seo_description" property="seoDescription" jdbcType="VARCHAR"/> -->
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, feature_data, published, category_id, publish_date, expire_date, hit_counter, score,
+        site_id, natural_key, title, short_description, description, page_title, featured_image,
+        create_time, update_time, create_by, update_by, deleted
+    </sql>
+
+    <select id="searchContents" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM content
+        WHERE deleted = 0
+        <if test="search.keyword != null and search.keyword != ''">
+            AND (title LIKE CONCAT('%', #{search.keyword}, '%')
+            OR short_description LIKE CONCAT('%', #{search.keyword}, '%')
+            OR description LIKE CONCAT('%', #{search.keyword}, '%'))
+        </if>
+        <if test="search.title != null and search.title != ''">
+            AND title LIKE CONCAT('%', #{search.title}, '%')
+        </if>
+        <if test="search.contentType != null and search.contentType != ''">
+            AND content_type = #{search.contentType}
+        </if>
+        <if test="search.status != null and search.status != ''">
+            AND status = #{search.status}
+        </if>
+        <if test="search.categoryId != null">
+            AND category_id = #{search.categoryId}
+        </if>
+        <if test="search.siteId != null">
+            AND site_id = #{search.siteId}
+        </if>
+        <if test="search.published != null">
+            AND published = #{search.published}
+        </if>
+        <if test="search.featureData != null">
+            AND feature_data = #{search.featureData}
+        </if>
+        <if test="search.language != null and search.language != ''">
+            AND language = #{search.language}
+        </if>
+        <if test="search.publishDateFrom != null">
+            AND publish_date >= #{search.publishDateFrom}
+        </if>
+        <if test="search.publishDateTo != null">
+            AND publish_date &lt;= #{search.publishDateTo}
+        </if>
+        <if test="search.createDateFrom != null">
+            AND create_date >= #{search.createDateFrom}
+        </if>
+        <if test="search.createDateTo != null">
+            AND create_date &lt;= #{search.createDateTo}
+        </if>
+        ORDER BY
+        <choose>
+            <when test="search.sortBy == 'title'">title</when>
+            <when test="search.sortBy == 'publishDate'">publish_date</when>
+            <when test="search.sortBy == 'hitCounter'">hit_counter</when>
+            <when test="search.sortBy == 'score'">score</when>
+            <when test="search.sortBy == 'sortOrder'">sort_order</when>
+            <otherwise>create_time</otherwise>
+        </choose>
+        <choose>
+            <when test="search.sortOrder == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </select>
+
+    <select id="getContentsByCategory" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM content
+        WHERE deleted = 0
+        AND category_id = #{categoryId}
+        AND published = 1
+        ORDER BY sort_order ASC, create_time DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <select id="getContentsByFeature" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM content
+        WHERE deleted = 0
+        AND feature_data = #{featureData}
+        AND published = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getPublishedContents" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM content
+        WHERE deleted = 0
+        AND published = 1
+        <if test="siteId != null">
+            AND site_id = #{siteId}
+        </if>
+        ORDER BY sort_order ASC, create_time DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- <select id="getContentsByTags" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM content
+        WHERE deleted = 0
+        AND published = 1
+        AND tags LIKE CONCAT('%', #{tags}, '%')
+        ORDER BY sort_order ASC, create_time DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select> -->
+
+    <update id="increaseHitCounter">
+        UPDATE content
+        SET hit_counter = hit_counter + 1,
+            update_time = NOW()
+        WHERE id = #{id}
+        AND deleted = 0
+    </update>
+
+    <update id="resetHitCounter">
+        UPDATE content
+        SET hit_counter = 0,
+            update_time = NOW()
+        WHERE id = #{id}
+        AND deleted = 0
+    </update>
+</mapper>
