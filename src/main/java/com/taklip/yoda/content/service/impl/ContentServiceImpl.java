@@ -108,7 +108,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
     }
 
     @Override
-    @Cacheable(value = "content:featured", key = "'offset:' + #offset + ':limit:' + #limit")
+    @Cacheable(value = "content:featured", keyGenerator = "customCacheKeyGenerator")
     public ContentPageResponse getFeaturedContents(Integer offset, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(offset, limit),
                 new LambdaQueryWrapper<Content>().eq(Content::isFeatureData, true).orderByDesc(Content::getCreateTime));
@@ -119,7 +119,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
     }
 
     @Override
-    @Cacheable(value = "content:no:featured", key = "'offset:' + #offset + ':limit:' + #limit")
+    @Cacheable(value = "content:no:featured", keyGenerator = "customCacheKeyGenerator")
     public ContentPageResponse getNoFeaturedContents(Integer offset, Integer limit) {
         IPage<Content> contentPage = null;
         try {
@@ -137,7 +137,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, Content> impl
     }
 
     @Override
-    @Cacheable(value = "content:published", key = "'offset:' + #offset + ':limit:' + #limit")
+    @Cacheable(value = "content:published", keyGenerator = "customCacheKeyGenerator")
     public ContentPageResponse getPublishedContents(Integer offset, Integer limit) {
         IPage<Content> contentPage = page(new Page<>(offset, limit),
                 new LambdaQueryWrapper<Content>().eq(Content::isPublished, true));

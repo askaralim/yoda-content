@@ -53,7 +53,6 @@ public class CacheConfig {
      */
     @Bean("redisCacheManager")
     public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
-        // Create custom serializer with proper ObjectMapper
         GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
         
         // Default cache configuration
@@ -107,7 +106,7 @@ public class CacheConfig {
         // Key serializer
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
-
+        
         // Value serializer with Java 8 date/time support
         GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
         

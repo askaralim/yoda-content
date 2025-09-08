@@ -1,0 +1,46 @@
+services:
+  yoda-content:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: yoda-content:latest
+    container_name: yoda-content
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8082
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -Djava.security.egd=file:/dev/./urandom
+      # Database configuration (shared with main app)
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/yoda?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&connectTimeout=10000&socketTimeout=10000
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      # Redis configuration
+      - SPRING_REDIS_HOST=host.docker.internal
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_PASSWORD=
+    volumes:
+      - ${HOME}/yoda-content/logs:/app/logs
+    networks:
+      - taklip-shared-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+networks:
+  taklip-shared-network:
+    external: true
+    driver: bridge
