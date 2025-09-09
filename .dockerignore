@@ -1,0 +1,60 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!build/libs/*.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Runtime
+*.pid
+*.port
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+
+# Test
+src/test/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Node modules (if any)
+node_modules/
+
+# Maven (if any)
+target/
+pom.xml
