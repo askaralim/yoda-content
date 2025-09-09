@@ -83,6 +83,12 @@ jobs:
             echo "🏷️ Tagging image for compose..."
             docker tag ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG_LATEST }} yoda-content:latest
 
+            echo "📁 Setting up deployment directory..."
+            mkdir -p /opt/yoda-content/deploy
+            
+            echo "📋 Copying compose file..."
+            cp compose.yaml /opt/yoda-content/deploy/
+            
             echo "🚀 Stopping existing containers..."
             cd /opt/yoda-content/deploy
             docker compose down --remove-orphans || true
