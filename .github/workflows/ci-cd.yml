@@ -5,10 +5,10 @@ run-name: ${{ github.repository }} is building and deploying
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 env:
   IMAGE_NAME: ${{ secrets.ALIYUN_ACR_REGISTRY }}/taklip-container/yoda-content
@@ -17,7 +17,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -61,7 +61,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Check out repository code
