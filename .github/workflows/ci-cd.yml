@@ -67,6 +67,15 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
+      - name: Upload compose file to ECS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.ALIYUN_ECS_HOST }}
+          username: ${{ secrets.ALIYUN_ECS_USER }}
+          key: ${{ secrets.ALIYUN_ECS_SSH_KEY }}
+          source: "compose.yaml"
+          target: "/opt/yoda-content/deploy/"
+
       - name: Deploy to AliCloud ECS
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -86,8 +95,8 @@ jobs:
             echo "📁 Setting up deployment directory..."
             mkdir -p /opt/yoda-content/deploy
             
-            echo "📋 Copying compose file..."
-            cp /github/workspace/compose.yaml /opt/yoda-content/deploy/
+            echo "🔍 Verifying compose file..."
+            ls -la /opt/yoda-content/deploy/compose.yaml
             
             echo "🚀 Stopping existing containers..."
             cd /opt/yoda-content/deploy
