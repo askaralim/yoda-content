@@ -67,14 +67,14 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Upload compose file to ECS
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.ALIYUN_ECS_HOST }}
-          username: ${{ secrets.ALIYUN_ECS_USER }}
-          key: ${{ secrets.ALIYUN_ECS_SSH_KEY }}
-          source: "compose.yaml"
-          target: "/opt/yoda-content/deploy/"
+      # - name: Upload compose file to ECS
+      #   uses: appleboy/scp-action@v0.1.4
+      #   with:
+      #     host: ${{ secrets.ALIYUN_ECS_HOST }}
+      #     username: ${{ secrets.ALIYUN_ECS_USER }}
+      #     key: ${{ secrets.ALIYUN_ECS_SSH_KEY }}
+      #     source: "compose.yaml"
+      #     target: "/opt/yoda-content/deploy/"
 
       - name: Deploy to AliCloud ECS
         uses: appleboy/ssh-action@v1.0.0
