@@ -76,6 +76,15 @@ jobs:
       #     source: "compose.yaml"
       #     target: "/opt/yoda-content/deploy/"
 
+      # - name: Upload Nginx configuration to ECS
+      #   uses: appleboy/scp-action@v0.1.4
+      #   with:
+      #     host: ${{ secrets.ALIYUN_ECS_HOST }}
+      #     username: ${{ secrets.ALIYUN_ECS_USER }}
+      #     key: ${{ secrets.ALIYUN_ECS_SSH_KEY }}
+      #     source: "nginx-ecs.conf"
+      #     target: "/tmp/nginx-ecs.conf"
+
       - name: Deploy to AliCloud ECS
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -97,6 +106,19 @@ jobs:
             
             echo "🔍 Verifying compose file..."
             ls -la /opt/yoda-content/deploy/compose.yaml
+            
+            # echo "📋 Updating Nginx configuration..."
+            # # Check if nginx container exists
+            # if docker ps | grep -q nginx; then
+            #   # Copy nginx config to the nginx container
+            #   docker cp /tmp/nginx-ecs.conf nginx:/etc/nginx/nginx.conf
+            #   # Test nginx configuration inside the container
+            #   docker exec nginx nginx -t && echo "✅ Nginx configuration is valid" || echo "❌ Nginx configuration error"
+            #   # Reload nginx inside the container
+            #   docker exec nginx nginx -s reload && echo "✅ Nginx reloaded successfully" || echo "❌ Nginx reload failed"
+            # else
+            #   echo "⚠️ Nginx container not found, will be started with new config"
+            # fi
             
             echo "🚀 Stopping existing containers..."
             cd /opt/yoda-content/deploy
